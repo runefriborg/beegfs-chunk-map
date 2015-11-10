@@ -66,7 +66,7 @@ The query tool reads CHUNK entries from STDIN.
 <h2>Usage</h2>
 <pre>
 Usage:
-  bp-chunkmap-create -d <directory to map> -o <leveldb output file> [-c <cache directory>]
+  bp-chunkmap-create -d &lt;directory to map&gt; -o &lt;leveldb output file&gt; [-c &lt;cache directory&gt;]
 
 Parameters explained:
   -d    Directory located on a BeeGFS mount
@@ -75,7 +75,7 @@ Parameters explained:
           default cache directory = "."
 
 Usage:
-  bp-chunkmap-query -m <leveldb map>
+  bp-chunkmap-query -m &lt;leveldb map&gt;
 
 Reads CHUNK IDs from STDIN and outputs the fetched filenames.
 
