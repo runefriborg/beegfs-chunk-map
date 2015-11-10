@@ -1,6 +1,8 @@
 # beegfs-chunk-map
 Creates a CHUNK -> FILENAME map for BeeGFS mounts.
 
+This tool is written to handle multi-PB filesystems with more than 100.000.000 files.
+
 <h2>Compile</h2>
 
 First edit beegfs-conf.sh to match your setup.
@@ -28,8 +30,15 @@ cc -c -I"/project/SystemWork/leveldb/include" -Wall -Wextra -pedantic -std=gnu99
 cc -c -I"/project/SystemWork/leveldb/include" -Wall -Wextra -pedantic -std=gnu99 -g -Os  getentry-runner.c -o getentry-runner.o
 cc -L"/project/SystemWork/leveldb" -lleveldb -lpthread perf.o getentry-runner.o -o bp-cm-getentry
 mv -f bp-cm-getentry ../../bin/
-cp -f beegfs-chunkmap.sh bp-chunkmap
-mv -f bp-chunkmap ../../bin/
+cc -c -I"/project/SystemWork/leveldb/include" -Wall -Wextra -pedantic -std=gnu99 -g -Os  bp-cm-query.c -o bp-cm-query.o
+bp-cm-query.c: In function 'main':
+bp-cm-query.c:39: warning: unused variable 'filename_fixed'
+cc -L"/project/SystemWork/leveldb" -lleveldb bp-cm-query.o -o bp-cm-query
+mv -f bp-cm-query ../../bin/
+cp -f beegfs-chunkmap-create.sh bp-chunkmap-create
+mv -f bp-chunkmap-create ../../bin/
+cp -f beegfs-chunkmap-query.sh bp-chunkmap-query
+mv -f bp-chunkmap-query ../../bin/
 cp -f ../beegfs-conf.sh ../../bin/
 </pre>
 
@@ -37,7 +46,7 @@ cp -f ../beegfs-conf.sh ../../bin/
 
 <pre>
 [user@host]$ cd beegfs-chunk-map/bin
-[user@host]$ ./bp-chunkmap -d /faststorage/folder -o TESTDB -c /tmp/
+[user@host]$ ./bp-chunkmap-create -d /faststorage/folder -o TESTDB -c /tmp/
 ##### /faststorage/folder #####
 Creating file lists /tmp//output.*
 .
@@ -47,18 +56,29 @@ Write entries to LevelDB: /home/../beegfs-chunk-map/bin/TESTDB
        17089 (100%) files processed at    9686 files/s
 </pre>
 
-<h2>Example lookup</h2>
-
-TODO
+<h2>Example query</h2>
+The query tool reads CHUNK entries from STDIN.
+<pre>
+[user@host]$ echo 1233-53BD1EC2-2329 | ./bp-chunkmap-query -m TESTDB
+/path/to/file.test
+</pre>
 
 <h2>Usage</h2>
 <pre>
 Usage:
-  bp-chunkmap -d <directory to map> -o <leveldb output file> [-c <cache directory>]
+  bp-chunkmap-create -d <directory to map> -o <leveldb output file> [-c <cache directory>]
 
 Parameters explained:
   -d    Directory located on a BeeGFS mount
   -o    Output file containing a chunk map in leveldb format (not located in BeeGFS mount!)
   -c    Cache directory used for large temporary files (not located in BeeGFS mount!)
           default cache directory = "."
+
+Usage:
+  bp-chunkmap-query -m <leveldb map>
+
+Reads CHUNK IDs from STDIN and outputs the fetched filenames.
+
+Parameters explained:
+  -m    Chunk map in leveldb format
 </pre>
