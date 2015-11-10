@@ -25,6 +25,9 @@ done
 # Check params
 if [ failed_params == 1 ] || [ $# -eq 0 ] || [ "$LEVELDB" == "" ]; then
         cat <<EOF
+Version: 0.1
+Author: Rune M. Friborg (runef@birc.au.dk)
+
 Usage:
   bp-chunkmap-query -m <leveldb map>
 

@@ -29,6 +29,9 @@ done
 # Check params
 if [ failed_params == 1 ] || [ $# -eq 0 ] || [ "$DIR" == "" ] || [ "$LEVELDB" == "" ]; then
         cat <<EOF
+Version: 0.1
+Author: Rune M. Friborg (runef@birc.au.dk)
+
 Usage:
   bp-chunkmap-create -d <directory to map> -o <leveldb output file> [-c <cache directory>]
 
