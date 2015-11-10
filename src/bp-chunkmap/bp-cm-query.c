@@ -4,12 +4,11 @@
 #include <limits.h>
 
 #include <leveldb/c.h>
-#define PREFIX "/faststorage/"
 
 int main(int argc, char **argv)
 {
-    if (argc != 3) {
-        fputs("usage: bp-chunkmap-query <map-folder>\n", stderr);
+    if (argc != 2) {
+        fputs("usage: bp-cm-query <map-folder>\n", stderr);
         return 1;
     }
 
@@ -36,11 +35,13 @@ int main(int argc, char **argv)
                 &filename_len,
                 &errmsg);
         leveldb_free(errmsg);
-        if (filename == NULL)
-            continue;
         char filename0[PATH_MAX];
         char filename_fixed[PATH_MAX];
-        snprintf(filename0, sizeof(filename0), PREFIX "%.*s", (int)filename_len, filename);
-	printf("%s\n", filename0);
+        if (filename == NULL) {
+	  fprintf(stderr, "Unknown %s\n", chunk_name);
+	} else {
+	  snprintf(filename0, sizeof(filename0), "%.*s", (int)filename_len, filename);
+	  printf("%s\n", filename0);
+	}
     }
 }
